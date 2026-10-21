@@ -33,7 +33,10 @@
       --text-subtle: #9c7848;
 
       /* Accents from sketch */
-      --olive: #5e7835;          /* Olive - main accent */
+      --olive: #5e7835;
+      --accent: #5e7835;
+      --accent-hover: #4e652a;
+      --accent-soft: rgba(94, 120, 53, 0.12);          /* Olive - main accent */
       --olive-lt: #7a9848;
       --olive-hover: #4e652a;
       --olive-soft: rgba(94, 120, 53, 0.12);
@@ -433,25 +436,45 @@
     }
 
     .btn-download {
-      background: var(--olive);
-      color: #fff;
-      border: none;
-      padding: 10px 22px;
-      border-radius: var(--radius-pill);
-      font-family: inherit;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px var(--olive-glow);
+      justify-content: center;
+      gap: 10px;
+      background: #5e7835 !important;
+      background-color: #5e7835 !important;
+      color: #ffffff !important;
+      padding: 13px 26px;
+      border-radius: var(--radius-md, 14px) !important;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      text-decoration: none !important;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 4px 14px rgba(94, 120, 53, 0.38);
+      scroll-margin-top: 140px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .btn-download:visited {
+      color: #ffffff !important;
+    }
+
+    .btn-download svg {
+      stroke: #ffffff !important;
+      fill: none !important;
     }
 
     .btn-download:hover {
-      background: var(--olive-hover);
-      transform: translateY(-1px);
+      background: #4e652a !important;
+      background-color: #4e652a !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(94, 120, 53, 0.48);
+    }
+
+    .btn-download:active {
+      transform: translateY(0);
     }
 
     .btn-secondary {
@@ -958,34 +981,7 @@
       align-items: flex-end;
       gap: 6px;
     }
-    .btn-download {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: var(--accent);
-      color: #ffffff;
-      padding: 13px 26px;
-      border-radius: var(--radius-md);
-      font-family: inherit;
-      font-size: 0.98rem;
-      font-weight: 700;
-      text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 14px rgba(94, 120, 53, 0.32);
-      scroll-margin-top: 140px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-    }
-    .btn-download:hover {
-      background: var(--accent-hover);
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(94, 120, 53, 0.45);
-    }
-    .btn-download:active {
-      transform: translateY(0);
-    }
+
     .btn-download.btn-highlight,
     .btn-download.card-highlight {
       animation: downloadBtnPulse 2.4s ease-out;
