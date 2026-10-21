@@ -944,21 +944,87 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 12px 18px;
+      padding: 14px 20px;
       background: var(--bg-base);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       margin: 16px 0 20px 0;
+      scroll-margin-top: 130px;
+      transition: all 0.3s ease;
+    }
+    .download-btn-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #ffffff;
+      padding: 13px 26px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 14px rgba(94, 120, 53, 0.32);
+      scroll-margin-top: 140px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .btn-download:hover {
+      background: var(--accent-hover);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(94, 120, 53, 0.45);
+    }
+    .btn-download:active {
+      transform: translateY(0);
+    }
+    .btn-download.btn-highlight,
+    .btn-download.card-highlight {
+      animation: downloadBtnPulse 2.4s ease-out;
+    }
+    @keyframes downloadBtnPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(94, 120, 53, 0.8), 0 4px 14px rgba(94, 120, 53, 0.32);
+      }
+      30% {
+        transform: scale(1.06);
+        box-shadow: 0 0 0 10px rgba(94, 120, 53, 0.4), 0 12px 30px rgba(94, 120, 53, 0.5);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(94, 120, 53, 0), 0 4px 14px rgba(94, 120, 53, 0.32);
+      }
+    }
+    .download-trust-caption {
+      font-size: 0.74rem;
+      color: var(--text-subtle);
+      font-weight: 500;
+      letter-spacing: -0.01em;
     }
     @media (max-width: 520px) {
       .card-action-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: 14px;
+        padding: 16px;
       }
-      .card-action-bar .razorpay-embed-btn {
-        display: flex;
-        justify-content: center;
+      .download-btn-group {
+        align-items: stretch;
+      }
+      .btn-download {
+        width: 100%;
+      }
+      .download-trust-caption {
+        text-align: center;
       }
     }
 
@@ -1127,20 +1193,26 @@
               <span class="share-btn-text">Share</span>
             </button>
           </div>
-          <!-- ACTION BAR: PAYMENT & DOWNLOAD APK (RIGHT BELOW HEADING & SUBHEADINGS) -->
-          <div class="card-action-bar">
+          <!-- ACTION BAR: PAYMENT & DOWNLOAD APK (ROUNDED WITH DIRECT BUTTON LINK) -->
+          <div class="card-action-bar" id="action-budgetier">
             <div class="card-price">
               <span class="price-amount">₹49</span>
               <span class="price-type">Lifetime · One-time</span>
             </div>
-            <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_TqjHdbNgF699To/view" data-text="Download APK · ₹49" data-color="#5e7835" data-size="large">
-              <script>
-                (function(){
-                  var d=document; var x=!d.getElementById('razorpay-embed-btn-js')
-                  if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js';
-                  s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
-                  rzp && rzp.init && rzp.init()}})();
-              </script>
+            <div class="download-btn-group">
+              <a href="https://pages.razorpay.com/pl_TqjHdbNgF699To/view" 
+                 target="_blank" 
+                 rel="noopener" 
+                 class="btn-download" 
+                 id="download-budgetier">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download APK · ₹49</span>
+              </a>
+              <span class="download-trust-caption">🔒 Secure Razorpay Checkout</span>
             </div>
           </div>
 
@@ -1382,16 +1454,17 @@
     
     // --- Deep Linking & Share Handler ---
     async function shareAppCard(appId, appTitle) {
-      // Direct link to the specific app card
-      const shareUrl = `${window.location.origin}${window.location.pathname}#${appId}`;
+      // Direct link bringing visitor directly to the download button
+      const downloadTarget = `download-${appId}`;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#${downloadTarget}`;
 
-      // Check for native mobile share (Instagram, WhatsApp, etc.)
+      // Check for native mobile share (Instagram Stories, WhatsApp, DMs, etc.)
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobile && navigator.share) {
         try {
           await navigator.share({
-            title: `${appTitle} · Xen-Lab Store`,
-            text: `Check out ${appTitle} on Xen-Lab Store:`,
+            title: `Download ${appTitle} · Xen-Lab Store`,
+            text: `Get ${appTitle} on Xen-Lab Store:`,
             url: shareUrl
           });
           return;
@@ -1411,7 +1484,7 @@
         fallbackCopyText(shareUrl);
       }
 
-      // Feedback on button
+      // Feedback on share button
       const btn = document.querySelector(`[data-share-target="${appId}"]`);
       if (btn) {
         const span = btn.querySelector('.share-btn-text');
@@ -1424,7 +1497,7 @@
         }, 2200);
       }
 
-      showToast(`Link to ${appTitle} copied!`);
+      showToast(`Direct download link to ${appTitle} copied!`);
     }
 
     function fallbackCopyText(text) {
@@ -1452,17 +1525,25 @@
       }
     }
 
-    // Scroll to & highlight shared card on load or hash change
+    // Scroll directly to & pulse highlight the download button on load or hash change
     function handleDeepLink() {
       const rawHash = window.location.hash.replace('#', '').trim();
       if (!rawHash) return;
 
-      const target = document.getElementById(rawHash) || document.getElementById('app-' + rawHash);
+      // Prioritize the download button itself
+      let target = document.getElementById(rawHash);
+      if (!target && !rawHash.startsWith('download-')) {
+        target = document.getElementById('download-' + rawHash);
+      }
+      if (!target) {
+        target = document.getElementById('action-' + rawHash) || document.getElementById('app-' + rawHash);
+      }
+
       if (target) {
         setTimeout(() => {
           target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          target.classList.add('card-highlight');
-          setTimeout(() => target.classList.remove('card-highlight'), 3000);
+          target.classList.add('btn-highlight');
+          setTimeout(() => target.classList.remove('btn-highlight'), 3000);
         }, 200);
       }
     }
