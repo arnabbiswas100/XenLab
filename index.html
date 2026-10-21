@@ -938,6 +938,30 @@
       }
     }
   
+    
+    .card-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 18px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin: 16px 0 20px 0;
+    }
+    @media (max-width: 520px) {
+      .card-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .card-action-bar .razorpay-embed-btn {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
     /* Share Button & Deep Linking */
     .product-card {
       scroll-margin-top: 110px;
@@ -1103,6 +1127,23 @@
               <span class="share-btn-text">Share</span>
             </button>
           </div>
+          <!-- ACTION BAR: PAYMENT & DOWNLOAD APK (RIGHT BELOW HEADING & SUBHEADINGS) -->
+          <div class="card-action-bar">
+            <div class="card-price">
+              <span class="price-amount">₹49</span>
+              <span class="price-type">Lifetime · One-time</span>
+            </div>
+            <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_TqjHdbNgF699To/view" data-text="Download APK · ₹49" data-color="#5e7835" data-size="large">
+              <script>
+                (function(){
+                  var d=document; var x=!d.getElementById('razorpay-embed-btn-js')
+                  if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js';
+                  s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
+                  rzp && rzp.init && rzp.init()}})();
+              </script>
+            </div>
+          </div>
+
           <p class="card-desc">
             A distraction-free, 100% offline personal finance and daily budget tracker designed to keep your spending disciplined, clear, and stress-free.
           </p>
@@ -1155,22 +1196,7 @@
 
         </div>
 
-        <!-- CARD FOOTER (PRICE & RAZORPAY EMBED CHECKOUT) -->
-        <div class="card-footer" style="align-items: center;">
-          <div class="card-price">
-            <span class="price-amount">₹49</span>
-            <span class="price-type">Lifetime · One-time</span>
-          </div>
-          <div class="razorpay-embed-btn" data-url="https://pages.razorpay.com/pl_TqjHdbNgF699To/view" data-text="Download APK · ₹49" data-color="#5e7835" data-size="large">
-            <script>
-              (function(){
-                var d=document; var x=!d.getElementById('razorpay-embed-btn-js')
-                if(x){ var s=d.createElement('script'); s.defer=!0;s.id='razorpay-embed-btn-js';
-                s.src='https://cdn.razorpay.com/static/embed_btn/bundle.js';d.body.appendChild(s);} else{var rzp=window['__rzp__'];
-                rzp && rzp.init && rzp.init()}})();
-            </script>
-          </div>
-        </div>
+
       </article>
 
     </section>
