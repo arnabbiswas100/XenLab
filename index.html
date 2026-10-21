@@ -937,6 +937,92 @@
         display: none;
       }
     }
+  
+    /* Share Button & Deep Linking */
+    .product-card {
+      scroll-margin-top: 110px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+    }
+    .product-card.card-highlight {
+      animation: cardPulseHighlight 2.4s ease-out;
+      border-color: var(--accent) !important;
+      box-shadow: 0 0 0 4px rgba(94, 120, 53, 0.3), 0 20px 40px rgba(0, 0, 0, 0.14) !important;
+    }
+    @keyframes cardPulseHighlight {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(94, 120, 53, 0.7);
+      }
+      25% {
+        transform: scale(1.018);
+        box-shadow: 0 0 0 8px rgba(94, 120, 53, 0.35), 0 24px 44px rgba(0, 0, 0, 0.16);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(94, 120, 53, 0);
+      }
+    }
+    .card-share-btn {
+      margin-left: auto;
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+    .card-share-btn:hover {
+      background: var(--card-bg);
+      color: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .card-share-btn.copied {
+      background: var(--accent) !important;
+      color: #ffffff !important;
+      border-color: var(--accent) !important;
+    }
+    .card-share-btn.copied svg {
+      stroke: #ffffff !important;
+    }
+    /* Share Toast Notification */
+    .share-toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e1208;
+      color: #ffffff;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .share-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .share-toast svg {
+      color: #a4c965;
+    }
+
   </style>
 </head>
 <body>
@@ -997,7 +1083,7 @@
     <section class="product-grid" id="apps">
       
       <!-- Flagship App: Budgetier -->
-      <article class="product-card" data-category="finance" data-title="Budgetier Personal Finance Android APK">
+      <article class="product-card" id="budgetier" data-category="finance" data-title="Budgetier Personal Finance Android APK">
         <div>
           <div class="card-top">
             <img src="assets/icon-512.png" alt="Budgetier" class="card-icon">
@@ -1006,6 +1092,16 @@
               <h2 class="card-title">Budgetier</h2>
               <span class="card-version">v1.0.7 · Signed APK (10.5 MB)</span>
             </div>
+            <button class="card-share-btn" data-share-target="budgetier" onclick="shareAppCard('budgetier', 'Budgetier')" title="Share Budgetier direct link" aria-label="Share Budgetier">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              <span class="share-btn-text">Share</span>
+            </button>
           </div>
           <p class="card-desc">
             A distraction-free, 100% offline personal finance and daily budget tracker designed to keep your spending disciplined, clear, and stress-free.
@@ -1257,8 +1353,104 @@
     searchInput.addEventListener('input', filterProducts);
     categoryFilter.addEventListener('change', filterProducts);
 
+    
+    // --- Deep Linking & Share Handler ---
+    async function shareAppCard(appId, appTitle) {
+      // Direct link to the specific app card
+      const shareUrl = `${window.location.origin}${window.location.pathname}#${appId}`;
+
+      // Check for native mobile share (Instagram, WhatsApp, etc.)
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({
+            title: `${appTitle} · Xen-Lab Store`,
+            text: `Check out ${appTitle} on Xen-Lab Store:`,
+            url: shareUrl
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      // Copy to clipboard fallback
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          fallbackCopyText(shareUrl);
+        }
+      } catch (e) {
+        fallbackCopyText(shareUrl);
+      }
+
+      // Feedback on button
+      const btn = document.querySelector(`[data-share-target="${appId}"]`);
+      if (btn) {
+        const span = btn.querySelector('.share-btn-text');
+        const origText = span ? span.textContent : 'Share';
+        btn.classList.add('copied');
+        if (span) span.textContent = 'Copied!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          if (span) span.textContent = origText;
+        }, 2200);
+      }
+
+      showToast(`Link to ${appTitle} copied!`);
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('share-toast');
+      const text = document.getElementById('toast-text');
+      if (toast && text) {
+        text.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2800);
+      }
+    }
+
+    // Scroll to & highlight shared card on load or hash change
+    function handleDeepLink() {
+      const rawHash = window.location.hash.replace('#', '').trim();
+      if (!rawHash) return;
+
+      const target = document.getElementById(rawHash) || document.getElementById('app-' + rawHash);
+      if (target) {
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.classList.add('card-highlight');
+          setTimeout(() => target.classList.remove('card-highlight'), 3000);
+        }, 200);
+      }
+    }
+
+    window.addEventListener('load', handleDeepLink);
+    window.addEventListener('hashchange', handleDeepLink);
+
     // Run on startup
     window.addEventListener('DOMContentLoaded', initPaymentConfig);
   </script>
+  <!-- Share Toast -->
+  <div id="share-toast" class="share-toast" role="status" aria-live="polite">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toast-text">Link copied to clipboard!</span>
+  </div>
 </body>
 </html>
